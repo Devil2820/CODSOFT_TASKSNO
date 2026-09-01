@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Blood Bank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><i class="bi bi-droplet-half brand-icon"></i> Blood Bank</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="donate.html">Donate</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item">
+            <span class="nav-link text-warning" id="userDisplay"></span>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <button class="btn btn-light btn-sm px-3" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <h1 class="mb-1">Admin Dashboard</h1>
+      <p class="mb-0">Manage blood stock and donations.</p>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 mb-4">
+          <div class="card border-0 shadow">
+            <div class="card-body">
+              <h5 class="sidebar-heading">Menu</h5>
+              <hr>
+              <ul class="list-unstyled" id="adminMenu">
+                <li class="mb-2"><i class="bi bi-speedometer2 text-danger"></i> <a href="#" data-tab="overview" class="text-decoration-none admin-tab-link fw-bold">Overview</a></li>
+                <li class="mb-2"><i class="bi bi-droplet text-danger"></i> <a href="#" data-tab="stock" class="text-decoration-none admin-tab-link">Blood Stock</a></li>
+                <li class="mb-2"><i class="bi bi-people text-danger"></i> <a href="#" data-tab="donors" class="text-decoration-none admin-tab-link">Donors</a></li>
+                <li class="mb-2"><i class="bi bi-clipboard-check text-danger"></i> <a href="#" data-tab="requests" class="text-decoration-none admin-tab-link">Requests</a></li>
+                <li class="mb-2"><i class="bi bi-envelope text-danger"></i> <a href="#" data-tab="messages" class="text-decoration-none admin-tab-link">Messages</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-9">
+          <div id="adminAlert" class="alert d-none" role="alert"></div>
+
+          <!-- Overview Tab -->
+          <div id="tab-overview" class="admin-tab">
+            <div class="row">
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statTotalDonors">-</div>
+                  <div class="text-muted">Total Donors</div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statUnitsAvailable">-</div>
+                  <div class="text-muted">Units Available</div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statNewRequests">-</div>
+                  <div class="text-muted">New Requests</div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statActiveDrives">-</div>
+                  <div class="text-muted">Approved / Active</div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statUnitsDonated">-</div>
+                  <div class="text-muted">Total Units Donated</div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6 mb-4">
+                <div class="stat-box text-center">
+                  <div class="stat-number" id="statPendingEmergencies">-</div>
+                  <div class="text-muted">Emergencies Awaiting Approval</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card border-0 shadow">
+              <div class="card-header bg-white fw-bold text-danger">Recent Donation Requests</div>
+              <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                  <thead>
+                    <tr><th>Donor</th><th>Blood Type</th><th>Date</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="recentRequestsBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blood Stock Tab -->
+          <div id="tab-stock" class="admin-tab d-none">
+            <div class="card border-0 shadow">
+              <div class="card-header bg-white fw-bold text-danger">Manage Blood Stock</div>
+              <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                  <thead>
+                    <tr><th>Blood Type</th><th>Units Available</th><th>Status</th><th>Update</th></tr>
+                  </thead>
+                  <tbody id="stockAdminBody"><tr><td colspan="4" class="text-muted">Loading...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donors Tab -->
+          <div id="tab-donors" class="admin-tab d-none">
+            <div class="card border-0 shadow">
+              <div class="card-header bg-white fw-bold text-danger">Registered Donors</div>
+              <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                  <thead>
+                    <tr><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Blood Type</th><th>City</th><th>Role</th><th>Action</th></tr>
+                  </thead>
+                  <tbody id="donorsBody"><tr><td colspan="8" class="text-muted">Loading...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Requests Tab -->
+          <div id="tab-requests" class="admin-tab d-none">
+            <div class="card border-0 shadow">
+              <div class="card-header bg-white fw-bold text-danger">All Donation Requests</div>
+              <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                  <thead>
+                    <tr><th>Donor</th><th>Blood Type</th><th>Contact</th><th>Preferred Date</th><th>Units</th><th>Status</th><th>Actions</th></tr>
+                  </thead>
+                  <tbody id="requestsAdminBody"><tr><td colspan="7" class="text-muted">Loading...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages Tab -->
+          <div id="tab-messages" class="admin-tab d-none">
+            <div class="card border-0 shadow">
+              <div class="card-header bg-white fw-bold text-danger">Contact Messages</div>
+              <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                  <thead>
+                    <tr><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Received</th><th>Action</th></tr>
+                  </thead>
+                  <tbody id="messagesBody"><tr><td colspan="6" class="text-muted">Loading...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; <span id="year"></span> Blood Bank. All Rights Reserved.</p>
+      <p class="mb-0">
+        <a href="index.html">Home</a> &nbsp;|&nbsp;
+        <a href="about.html">About</a> &nbsp;|&nbsp;
+        <a href="contact.html">Contact</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Auth guard: only admins allowed
+    if (requireAuth(['admin'])) {
+      displayUser();
+      initAdminTabs();
+      loadOverview();
+    }
+
+    // ---------- Tab switching ----------
+    function initAdminTabs() {
+      document.querySelectorAll('.admin-tab-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tab = link.dataset.tab;
+          document.querySelectorAll('.admin-tab').forEach(el => el.classList.add('d-none'));
+          document.getElementById('tab-' + tab).classList.remove('d-none');
+          document.querySelectorAll('.admin-tab-link').forEach(l => l.classList.remove('fw-bold'));
+          link.classList.add('fw-bold');
+
+          if (tab === 'overview') loadOverview();
+          if (tab === 'stock') loadStockAdmin();
+          if (tab === 'donors') loadDonors();
+          if (tab === 'requests') loadRequestsAdmin();
+          if (tab === 'messages') loadMessages();
+        });
+      });
+    }
+
+    function showAdminAlert(message, type = 'success') {
+      const box = document.getElementById('adminAlert');
+      box.textContent = message;
+      box.className = `alert alert-${type}`;
+      setTimeout(() => box.classList.add('d-none'), 3500);
+    }
+
+    function statusBadge(status) {
+      const map = { Completed: 'success', Approved: 'primary', Pending: 'warning text-dark', Rejected: 'danger' };
+      return `<span class="badge bg-${map[status] || 'secondary'}">${status}</span>`;
+    }
+
+    function emergencyBadge(req) {
+      if (!req.is_emergency) return '';
+      return req.emergency_approved
+        ? ' <span class="badge bg-info text-dark">Emergency Approved</span>'
+        : ' <span class="badge bg-warning text-dark">Emergency - Awaiting Approval</span>';
+    }
+
+    function stockBadge(status) {
+      if (status === 'Critical') return '<span class="badge bg-danger">Critical</span>';
+      if (status === 'Low') return '<span class="badge bg-warning text-dark">Low</span>';
+      return '<span class="badge bg-success">Available</span>';
+    }
+
+    function fmtDate(d) {
+      return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // ---------- Overview ----------
+    async function loadOverview() {
+      try {
+        const stats = await apiFetch('/stats');
+        document.getElementById('statTotalDonors').textContent = stats.total_donors;
+        document.getElementById('statUnitsAvailable').textContent = stats.units_available;
+        document.getElementById('statNewRequests').textContent = stats.new_requests;
+        document.getElementById('statActiveDrives').textContent = stats.active_drives;
+        document.getElementById('statUnitsDonated').textContent = stats.units_donated_total;
+        document.getElementById('statPendingEmergencies').textContent = stats.pending_emergencies;
+
+        const requests = await apiFetch('/donations');
+        const body = document.getElementById('recentRequestsBody');
+        const recent = requests.slice(0, 8);
+        body.innerHTML = recent.length
+          ? recent.map(r => `<tr>
+              <td>${r.full_name}</td>
+              <td>${r.blood_type}</td>
+              <td>${fmtDate(r.created_at)}</td>
+              <td>${statusBadge(r.status)}${emergencyBadge(r)}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="4" class="text-muted">No requests yet.</td></tr>';
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    // ---------- Blood Stock CRUD ----------
+    async function loadStockAdmin() {
+      const body = document.getElementById('stockAdminBody');
+      try {
+        const stock = await apiFetch('/stock');
+        body.innerHTML = stock.map(row => `<tr>
+            <td><strong>${row.blood_type}</strong></td>
+            <td style="max-width:120px;">
+              <input type="number" min="0" class="form-control form-control-sm" id="stock-${row.blood_type}" value="${row.units_available}">
+            </td>
+            <td>${stockBadge(row.status)}</td>
+            <td><button class="btn btn-sm btn-blood" onclick="updateStock('${row.blood_type}')">Update</button></td>
+          </tr>`).join('');
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="4" class="text-danger">${err.message}</td></tr>`;
+      }
+    }
+
+    async function updateStock(bloodType) {
+      const value = Number(document.getElementById(`stock-${bloodType}`).value);
+      try {
+        await apiFetch(`/stock/${bloodType}`, {
+          method: 'PUT',
+          body: JSON.stringify({ units_available: value }),
+        });
+        showAdminAlert(`${bloodType} stock updated to ${value} units.`);
+        loadStockAdmin();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    // ---------- Donors ----------
+    async function loadDonors() {
+      const body = document.getElementById('donorsBody');
+      try {
+        const users = await apiFetch('/users');
+        body.innerHTML = users.length
+          ? users.map(u => `<tr>
+              <td>${u.full_name}</td>
+              <td>${u.username}</td>
+              <td>${u.email || '-'}</td>
+              <td>${u.phone || '-'}</td>
+              <td>${u.blood_type || '-'}</td>
+              <td>${u.city || '-'}</td>
+              <td><span class="badge bg-${u.role === 'admin' ? 'dark' : 'secondary'}">${u.role}</span></td>
+              <td>${u.role === 'admin' ? '<span class="text-muted small">protected</span>' : `<button class="btn btn-sm btn-outline-danger" onclick="deleteDonor(${u.id}, '${u.full_name.replace(/'/g, "\\'")}')">Delete</button>`}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="8" class="text-muted">No donors registered yet.</td></tr>';
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="8" class="text-danger">${err.message}</td></tr>`;
+      }
+    }
+
+    async function deleteDonor(id, name) {
+      if (!confirm(`Remove donor "${name}"? This cannot be undone.`)) return;
+      try {
+        await apiFetch(`/users/${id}`, { method: 'DELETE' });
+        showAdminAlert(`Donor "${name}" removed.`);
+        loadDonors();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    // ---------- Donation Requests CRUD ----------
+    async function loadRequestsAdmin() {
+      const body = document.getElementById('requestsAdminBody');
+      try {
+        const requests = await apiFetch('/donations');
+        body.innerHTML = requests.length
+          ? requests.map(r => {
+              const needsEmergencyApproval = r.is_emergency && !r.emergency_approved;
+              return `<tr>
+              <td>${r.full_name}</td>
+              <td>${r.blood_type}</td>
+              <td>${r.email}<br><span class="text-muted small">${r.phone}</span></td>
+              <td>${fmtDate(r.preferred_date)}</td>
+              <td style="max-width:90px;">
+                <input type="number" min="1" class="form-control form-control-sm" id="units-${r.id}" value="${r.units}">
+              </td>
+              <td>${statusBadge(r.status)}${emergencyBadge(r)}</td>
+              <td>
+                <div class="d-flex flex-wrap gap-1">
+                  ${needsEmergencyApproval
+                    ? `<button class="btn btn-sm btn-warning" onclick="approveEmergency(${r.id})">Approve Emergency</button>`
+                    : `<button class="btn btn-sm btn-outline-success" onclick="updateRequestStatus(${r.id}, 'Approved')">Approve</button>
+                       <button class="btn btn-sm btn-outline-primary" onclick="updateRequestStatus(${r.id}, 'Completed')">Complete</button>`}
+                  <button class="btn btn-sm btn-outline-warning" onclick="updateRequestStatus(${r.id}, 'Rejected')">Reject</button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteRequest(${r.id})">Delete</button>
+                </div>
+              </td>
+            </tr>`;
+            }).join('')
+          : '<tr><td colspan="7" class="text-muted">No donation requests yet.</td></tr>';
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="7" class="text-danger">${err.message}</td></tr>`;
+      }
+    }
+
+    async function approveEmergency(id) {
+      try {
+        await apiFetch(`/donations/${id}/emergency-approve`, { method: 'PUT' });
+        showAdminAlert(`Emergency request #${id} approved. You can now Approve/Complete it.`);
+        loadRequestsAdmin();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    async function updateRequestStatus(id, status) {
+      const unitsInput = document.getElementById(`units-${id}`);
+      const units = unitsInput ? Number(unitsInput.value) : undefined;
+      try {
+        await apiFetch(`/donations/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status, units }),
+        });
+        showAdminAlert(`Request #${id} marked as ${status}${status === 'Completed' ? ` (${units} unit(s) added to stock)` : ''}.`);
+        loadRequestsAdmin();
+        loadOverview();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    async function deleteRequest(id) {
+      if (!confirm(`Delete donation request #${id}?`)) return;
+      try {
+        await apiFetch(`/donations/${id}`, { method: 'DELETE' });
+        showAdminAlert(`Request #${id} deleted.`);
+        loadRequestsAdmin();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+
+    // ---------- Contact Messages ----------
+    async function loadMessages() {
+      const body = document.getElementById('messagesBody');
+      try {
+        const messages = await apiFetch('/contact');
+        body.innerHTML = messages.length
+          ? messages.map(m => `<tr>
+              <td>${m.full_name}</td>
+              <td>${m.email}</td>
+              <td>${m.subject}</td>
+              <td style="max-width:250px;">${m.message}</td>
+              <td>${fmtDate(m.created_at)}</td>
+              <td><button class="btn btn-sm btn-outline-danger" onclick="deleteMessage(${m.id})">Delete</button></td>
+            </tr>`).join('')
+          : '<tr><td colspan="6" class="text-muted">No messages yet.</td></tr>';
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="6" class="text-danger">${err.message}</td></tr>`;
+      }
+    }
+
+    async function deleteMessage(id) {
+      if (!confirm('Delete this message?')) return;
+      try {
+        await apiFetch(`/contact/${id}`, { method: 'DELETE' });
+        showAdminAlert('Message deleted.');
+        loadMessages();
+      } catch (err) {
+        showAdminAlert(err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

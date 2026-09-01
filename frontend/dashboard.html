@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | Blood Bank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><i class="bi bi-droplet-half brand-icon"></i> Blood Bank</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="donate.html">Donate</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item">
+            <span class="nav-link text-warning" id="userDisplay"></span>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <button class="btn btn-light btn-sm px-3" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <h1 class="mb-1">Welcome, <span id="welcomeName">User</span>!</h1>
+      <p class="mb-0">This is your personal donor dashboard.</p>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 mb-4">
+          <div class="card border-0 shadow">
+            <div class="card-body">
+              <h5 class="sidebar-heading">Menu</h5>
+              <hr>
+              <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-person-circle text-danger"></i> <a href="#" class="text-decoration-none">Profile</a></li>
+                <li class="mb-2"><i class="bi bi-droplet text-danger"></i> <a href="donate.html" class="text-decoration-none">Donate Blood</a></li>
+                <li class="mb-2"><i class="bi bi-clipboard-check text-danger"></i> <a href="#" class="text-decoration-none">My Donations</a></li>
+                <li class="mb-2"><i class="bi bi-gear text-danger"></i> <a href="#" class="text-decoration-none">Settings</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-9">
+          <div id="eligibilityBanner" class="alert d-none" role="alert"></div>
+
+          <div class="row">
+            <div class="col-md-4 mb-4">
+              <div class="stat-box text-center">
+                <div class="stat-number" id="statTotalDonations">-</div>
+                <div class="text-muted">Total Donations</div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-4">
+              <div class="stat-box text-center">
+                <div class="stat-number" id="statBloodDonated">-</div>
+                <div class="text-muted">Blood Donated</div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-4">
+              <div class="stat-box text-center">
+                <div class="stat-number" id="statLivesSaved">-</div>
+                <div class="text-muted">Lives Saved</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow mb-4">
+            <div class="card-header bg-white fw-bold text-danger">My Donation History</div>
+            <div class="table-responsive">
+              <table class="table table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Blood Type</th>
+                    <th>Units</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                  <tr><td colspan="5" class="text-muted">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow">
+            <div class="card-header bg-white fw-bold text-danger">My Donation Requests</div>
+            <div class="table-responsive">
+              <table class="table table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Requested On</th>
+                    <th>Blood Type</th>
+                    <th>Preferred Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="requestsTableBody">
+                  <tr><td colspan="4" class="text-muted">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; <span id="year"></span> Blood Bank. All Rights Reserved.</p>
+      <p class="mb-0">
+        <a href="index.html">Home</a> &nbsp;|&nbsp;
+        <a href="about.html">About</a> &nbsp;|&nbsp;
+        <a href="contact.html">Contact</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Auth guard: only users allowed
+    if (requireAuth(['user'])) {
+      displayUser();
+      const name = sessionStorage.getItem('bloodBankName');
+      document.getElementById('welcomeName').textContent = name || 'User';
+      loadMyDashboard();
+      loadEligibility();
+    }
+
+    function statusBadge(status) {
+      const map = { Completed: 'success', Approved: 'primary', Pending: 'warning text-dark', Rejected: 'danger' };
+      return `<span class="badge bg-${map[status] || 'secondary'}">${status}</span>`;
+    }
+
+    function emergencyBadge(req) {
+      if (!req.is_emergency) return '';
+      return req.emergency_approved
+        ? ' <span class="badge bg-info text-dark">Emergency Approved</span>'
+        : ' <span class="badge bg-warning text-dark">Emergency - Awaiting Admin</span>';
+    }
+
+    async function loadEligibility() {
+      const banner = document.getElementById('eligibilityBanner');
+      try {
+        const e = await apiFetch('/donations/eligibility');
+        banner.classList.remove('d-none');
+        if (e.eligible) {
+          banner.className = 'alert alert-success';
+          banner.innerHTML = e.last_donation_date
+            ? `<i class="bi bi-check-circle"></i> You're eligible to donate. Last donation: ${e.last_donation_date}.`
+            : `<i class="bi bi-check-circle"></i> You're eligible to donate. Welcome, first-time donor!`;
+        } else {
+          banner.className = 'alert alert-warning';
+          banner.innerHTML = `<i class="bi bi-hourglass-split"></i> Based on your last donation (${e.last_donation_date}), you're not eligible again until <strong>${e.next_eligible_date}</strong> (${e.days_remaining} day(s) left). Need to donate sooner? Submit a request from the <a href="donate.html">Donate page</a> and check "emergency" — an admin will need to approve it.`;
+        }
+      } catch (err) {
+        banner.classList.add('d-none');
+      }
+    }
+
+    async function loadMyDashboard() {
+      const historyBody = document.getElementById('historyTableBody');
+      const requestsBody = document.getElementById('requestsTableBody');
+      try {
+        const data = await apiFetch('/donations/mine');
+        const history = data.history || [];
+        const requests = data.requests || [];
+
+        document.getElementById('statTotalDonations').textContent = history.length;
+        const totalUnits = history.reduce((sum, h) => sum + h.units, 0);
+        document.getElementById('statBloodDonated').textContent = (totalUnits * 500) + 'ml';
+        document.getElementById('statLivesSaved').textContent = totalUnits * 3;
+
+        historyBody.innerHTML = history.length
+          ? history.map(h => `<tr>
+              <td>${new Date(h.donation_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+              <td>${h.blood_type}</td>
+              <td>${h.units}</td>
+              <td>${h.location || '-'}</td>
+              <td>${statusBadge(h.status)}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="5" class="text-muted">No completed donations yet.</td></tr>';
+
+        requestsBody.innerHTML = requests.length
+          ? requests.map(r => `<tr>
+              <td>${new Date(r.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+              <td>${r.blood_type}</td>
+              <td>${new Date(r.preferred_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+              <td>${statusBadge(r.status)}${emergencyBadge(r)}</td>
+            </tr>`).join('')
+          : '<tr><td colspan="4" class="text-muted">No donation requests yet. <a href="donate.html">Submit one</a>.</td></tr>';
+      } catch (err) {
+        historyBody.innerHTML = `<tr><td colspan="5" class="text-danger">${err.message}</td></tr>`;
+        requestsBody.innerHTML = `<tr><td colspan="4" class="text-danger">${err.message}</td></tr>`;
+      }
+    }
+  </script>
+</body>
+</html>

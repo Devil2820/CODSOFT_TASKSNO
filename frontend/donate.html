@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donate Blood | Blood Bank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><i class="bi bi-droplet-half brand-icon"></i> Blood Bank</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link active" href="donate.html">Donate</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-light btn-sm px-3" href="login.html">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="py-5 text-center" style="background: linear-gradient(135deg, #8b0000, #dc3545); color: #fff;">
+    <div class="container">
+      <h1 class="display-5">Donate Blood</h1>
+      <p class="lead mb-0">Check current stock levels and register to donate</p>
+    </div>
+  </header>
+
+  <!-- Blood Stock -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title center-title text-center mb-4">Current Blood Stock</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+          <thead>
+            <tr>
+              <th>Blood Type</th>
+              <th>Units Available</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody">
+            <tr><td colspan="3" class="text-muted">Loading live stock from database...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Donation Form -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h2 class="section-title center-title text-center mb-4">Register to Donate</h2>
+          <div class="card border-0 shadow p-4">
+            <form onsubmit="handleDonate(event)">
+              <div id="donateSuccess" class="alert alert-success d-none" role="alert">
+                Thank you! Your donation request has been submitted. We will contact you soon.
+              </div>
+              <div id="donateError" class="alert alert-danger d-none" role="alert"></div>
+              <div id="eligibilityBanner" class="alert alert-info d-none" role="alert"></div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="donorName" class="form-control" required placeholder="Enter your name">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Blood Type</label>
+                  <select id="donorBloodType" class="form-select" required>
+                    <option value="">Select blood type</option>
+                    <option>A+</option>
+                    <option>A-</option>
+                    <option>B+</option>
+                    <option>B-</option>
+                    <option>AB+</option>
+                    <option>AB-</option>
+                    <option>O+</option>
+                    <option>O-</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" id="donorEmail" class="form-control" required placeholder="you@example.com">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Phone</label>
+                  <input type="tel" id="donorPhone" class="form-control" required placeholder="+91 98765 43210">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Age</label>
+                  <input type="number" id="donorAge" class="form-control" min="18" max="65" required placeholder="18-65">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Preferred Date</label>
+                  <input type="date" id="donorDate" class="form-control" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Address</label>
+                  <textarea id="donorAddress" class="form-control" rows="2" required placeholder="Enter your address"></textarea>
+                </div>
+                <div class="col-12 form-check">
+                  <input type="checkbox" class="form-check-input" id="donorEmergency">
+                  <label class="form-check-label" for="donorEmergency">
+                    This is an <strong>emergency / urgent</strong> donation request (only usable if you're not
+                    yet past the standard 90-day gap since your last donation — an admin must approve it before it can proceed)
+                  </label>
+                </div>
+                <div class="col-12 text-center">
+                  <button type="submit" class="btn btn-blood btn-lg px-5">Submit Request</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-1">&copy; <span id="year"></span> Blood Bank. All Rights Reserved.</p>
+      <p class="mb-0">
+        <a href="index.html">Home</a> &nbsp;|&nbsp;
+        <a href="about.html">About</a> &nbsp;|&nbsp;
+        <a href="donate.html">Donate</a> &nbsp;|&nbsp;
+        <a href="contact.html">Contact</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // If logged in, show this donor's eligibility status right on the form
+    (async function () {
+      if (!sessionStorage.getItem('bloodBankToken')) return;
+      try {
+        const e = await apiFetch('/donations/eligibility');
+        const banner = document.getElementById('eligibilityBanner');
+        banner.classList.remove('d-none');
+        if (e.eligible) {
+          banner.className = 'alert alert-success';
+          banner.textContent = e.last_donation_date
+            ? `You're eligible to donate. Last donation: ${e.last_donation_date}.`
+            : `You're eligible to donate. Welcome, first-time donor!`;
+        } else {
+          banner.className = 'alert alert-warning';
+          banner.textContent = `Based on your last donation (${e.last_donation_date}), you're not yet eligible until ${e.next_eligible_date} (${e.days_remaining} day(s) left). If this is urgent, check the emergency box below — an admin will need to approve it.`;
+        }
+      } catch (err) {
+        /* not logged in or check failed - silently skip the banner */
+      }
+    })();
+  </script>
+</body>
+</html>
