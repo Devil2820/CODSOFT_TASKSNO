@@ -17,6 +17,7 @@ services:
 
   app:
     build: .
+    restart: unless-stopped
     ports:
       - "4000:4000"
     environment:
