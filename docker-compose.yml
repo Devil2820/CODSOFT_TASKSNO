@@ -17,6 +17,7 @@ services:
 
   app:
     build: .
+    container_name: blood-bank-app
     restart: unless-stopped
     ports:
       - "4000:4000"
